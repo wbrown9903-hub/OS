@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+.next/
+out/
+build/
+dist/*
+!dist/.gitkeep
+.turbo/
+*.tsbuildinfo
+.swiftpm/
+.build/
+DerivedData/
+*.xcuserstate
+
+# Environment and secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.p8
+*.mobileprovision
+*.cer
+*.certSigningRequest
+secrets.json
+credentials.json
+service-account*.json
+*.key
+!**/public.key
+.netrc
+.npmrc
+notarization-*.json
+AuthKey_*.p8
+
+# Local database and generated Prisma client
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+prisma/dev.db*
+packages/database/generated/
+
+# Caches
+.cache/
+.eslintcache
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+.vitest/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# OS noise
+.DS_Store
+Thumbs.db
+._*
+.Spotlight-V100
+.Trashes
+
+# Nexus runtime data (created at run time, never source)
+.nexus/
+apps/web/public/cache/
