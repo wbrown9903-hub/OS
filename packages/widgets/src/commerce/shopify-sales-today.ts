@@ -1,0 +1,71 @@
+import type { WidgetDefinition } from "@nexus/schemas";
+import { audioValue, compareToProperty, currencyProperty, refreshProperty, titleProperty } from "../helpers.js";
+
+/** Today's takings. Never renders a figure it did not receive from Shopify. */
+export const shopifySalesTodayWidget: WidgetDefinition = {
+  type: "commerce.shopifySalesToday",
+  name: "Shopify — sales today",
+  summary: "Money taken so far today, with the change on an earlier period.",
+  category: "Commerce",
+  icon: "banknote",
+  defaultSpan: { columns: 3, rows: 2 },
+  minimumSpan: { columns: 2, rows: 1 },
+  requiresConnection: "shopify",
+  dataEndpoint: "/api/widgets/shopify/sales-today",
+  defaultRefreshSeconds: 300,
+  helpTopicId: "widget-shopify-sales",
+  previewHint: "Shows “Not connected” until your shop is linked — never a placeholder number.",
+  schema: {
+    title: titleProperty("Sales today"),
+    shop: {
+      kind: "connection",
+      label: "Shop",
+      help: "Which connected Shopify shop this reads. Credentials stay in the Keychain.",
+      defaultValue: null,
+      service: "shopify",
+      group: "Data",
+    },
+    currencyDisplay: currencyProperty(),
+    compareTo: compareToProperty(),
+    dailyGoal: {
+      kind: "number",
+      label: "Daily goal",
+      help: "Set a target and the widget shows how far through it you are. Zero hides the goal.",
+      defaultValue: 0,
+      min: 0,
+      max: 10000000,
+      step: 10,
+      group: "Data",
+    },
+    showSparkline: {
+      kind: "toggle",
+      label: "Show today's shape",
+      help: "A small line showing how sales arrived through the day.",
+      defaultValue: true,
+      group: "Appearance",
+    },
+    includeTax: {
+      kind: "toggle",
+      label: "Include tax",
+      help: "Whether the figure is gross or net. Match this to how you normally read your numbers.",
+      defaultValue: false,
+      group: "Data",
+    },
+    playSoundOnSale: {
+      kind: "toggle",
+      label: "Play a sound on a new sale",
+      help: "Plays once per confirmed sale. A duplicate delivery from Shopify never plays twice.",
+      defaultValue: false,
+      group: "Behaviour",
+    },
+    saleSound: {
+      kind: "audio",
+      label: "Sale sound",
+      help: "The sound played for a new sale.",
+      defaultValue: audioValue({ builtInId: "nexus-coin", volume: 0.5 }),
+      group: "Behaviour",
+      visibleWhen: { property: "playSoundOnSale", equals: true },
+    },
+    refreshSeconds: refreshProperty(300),
+  },
+};

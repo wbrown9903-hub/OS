@@ -1,0 +1,102 @@
+import type { WidgetDefinition } from "@nexus/schemas";
+import { densityProperty, emptyMessageProperty, refreshProperty, titleProperty } from "../helpers.js";
+
+/** Prices for things the user is watching. Read-only market data, no trading. */
+export const watchlistWidget: WidgetDefinition = {
+  type: "finance.watchlist",
+  name: "Watchlist",
+  summary: "Prices for the things you are keeping an eye on.",
+  category: "Finance",
+  icon: "chart.xyaxis.line",
+  defaultSpan: { columns: 4, rows: 3 },
+  minimumSpan: { columns: 2, rows: 2 },
+  requiresConnection: "market-data",
+  dataEndpoint: "/api/widgets/market/watchlist",
+  defaultRefreshSeconds: 300,
+  helpTopicId: "widget-watchlist",
+  previewHint: "Prices are delayed unless your data source says otherwise. Nexus OS cannot trade.",
+  schema: {
+    title: titleProperty("Watchlist"),
+    entries: {
+      kind: "list",
+      label: "What to watch",
+      help: "Each row is one symbol. Prices come from your connected market-data source.",
+      defaultValue: [],
+      itemLabel: "Symbol",
+      itemSchema: {
+        symbol: {
+          kind: "text",
+          label: "Symbol",
+          help: "The ticker, for example BTC or AAPL.",
+          defaultValue: "",
+          maxLength: 16,
+        },
+        label: {
+          kind: "text",
+          label: "Name to show",
+          help: "Optional friendlier name.",
+          defaultValue: "",
+          maxLength: 40,
+        },
+        kind: {
+          kind: "select",
+          label: "Type",
+          help: "Which market this symbol is on.",
+          defaultValue: "crypto",
+          options: [
+            { value: "crypto", label: "Cryptocurrency" },
+            { value: "stock", label: "Share" },
+            { value: "index", label: "Index" },
+            { value: "currency", label: "Currency pair" },
+          ],
+        },
+      },
+      group: "Content",
+    },
+    displayCurrency: {
+      kind: "select",
+      label: "Show prices in",
+      help: "The currency prices are converted into for display.",
+      defaultValue: "GBP",
+      options: [
+        { value: "GBP", label: "Pounds (GBP)" },
+        { value: "USD", label: "US dollars (USD)" },
+        { value: "EUR", label: "Euros (EUR)" },
+        { value: "native", label: "Whatever the market quotes" },
+      ],
+      group: "Appearance",
+    },
+    showChangePercent: {
+      kind: "toggle",
+      label: "Show the change",
+      help: "Adds the move since the previous close, with an arrow and a word as well as colour.",
+      defaultValue: true,
+      group: "Appearance",
+    },
+    sortBy: {
+      kind: "select",
+      label: "Order by",
+      help: "How rows are sorted.",
+      defaultValue: "manual",
+      options: [
+        { value: "manual", label: "The order you set" },
+        { value: "biggestMove", label: "Biggest move first" },
+        { value: "name", label: "Name" },
+      ],
+      group: "Appearance",
+    },
+    highlightMovePercent: {
+      kind: "slider",
+      label: "Highlight moves over",
+      help: "Rows that moved more than this are marked as notable, with a label rather than colour alone.",
+      defaultValue: 5,
+      min: 1,
+      max: 50,
+      step: 1,
+      group: "Behaviour",
+    },
+    density: densityProperty(),
+    emptyMessage: emptyMessageProperty("Nothing on the watchlist yet."),
+    refreshSeconds: refreshProperty(300),
+  },
+};

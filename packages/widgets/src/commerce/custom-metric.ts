@@ -1,0 +1,75 @@
+import type { WidgetDefinition } from "@nexus/schemas";
+import { compareToProperty, refreshProperty } from "../helpers.js";
+
+/** One number from any connected source, labelled and formatted by the user. */
+export const customMetricWidget: WidgetDefinition = {
+  type: "commerce.customMetric",
+  name: "Custom metric",
+  summary: "One number from any connected source, labelled the way you think of it.",
+  category: "Commerce",
+  icon: "number.square",
+  defaultSpan: { columns: 3, rows: 2 },
+  minimumSpan: { columns: 2, rows: 1 },
+  dataEndpoint: "/api/widgets/metric",
+  defaultRefreshSeconds: 600,
+  helpTopicId: "widget-custom-metric",
+  previewHint: "Displays only what the source returns. If the source is silent, the widget says so.",
+  schema: {
+    label: {
+      kind: "text",
+      label: "What this measures",
+      help: "The words under the number. Write it the way you would say it out loud.",
+      defaultValue: "Custom metric",
+      maxLength: 60,
+      group: "Content",
+    },
+    source: {
+      kind: "connection",
+      label: "Source",
+      help: "Which connected service supplies the figure.",
+      defaultValue: null,
+      service: "metrics",
+      group: "Data",
+    },
+    metricKey: {
+      kind: "text",
+      label: "Measure",
+      help: "The name of the figure to read from that source, for example “subscribers.total”.",
+      defaultValue: "",
+      maxLength: 120,
+      group: "Data",
+    },
+    unit: {
+      kind: "text",
+      label: "Unit",
+      help: "Shown after the number, for example “orders”, “%” or “kg”.",
+      defaultValue: "",
+      maxLength: 16,
+      group: "Appearance",
+    },
+    decimalPlaces: {
+      kind: "number",
+      label: "Decimal places",
+      help: "How precisely to show the number. Zero rounds to whole numbers.",
+      defaultValue: 0,
+      min: 0,
+      max: 4,
+      step: 1,
+      group: "Appearance",
+    },
+    direction: {
+      kind: "select",
+      label: "Which way is good",
+      help: "Decides whether a rise is shown as an improvement or a problem.",
+      defaultValue: "higherIsBetter",
+      options: [
+        { value: "higherIsBetter", label: "Higher is better" },
+        { value: "lowerIsBetter", label: "Lower is better" },
+        { value: "neutral", label: "Neither — just show the change" },
+      ],
+      group: "Data",
+    },
+    compareTo: compareToProperty(),
+    refreshSeconds: refreshProperty(600),
+  },
+};

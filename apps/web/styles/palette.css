@@ -1,0 +1,185 @@
+/* The command palette (⌘K). Keyboard-first: every state here has a keyboard route. */
+
+.nx-palette-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--nx-z-palette);
+  display: flex;
+  justify-content: center;
+  padding: clamp(var(--nx-space-4), 12vh, 140px) var(--nx-space-4) var(--nx-space-4);
+  background: color-mix(in srgb, var(--nx-shadow) 52%, transparent);
+  backdrop-filter: blur(calc(8px * var(--nx-panel-opacity)));
+  animation: nx-fade var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-palette {
+  width: min(680px, 100%);
+  max-height: min(70vh, 620px);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--nx-radius);
+  border: var(--nx-hairline);
+  background: var(--nx-surface-raised);
+  box-shadow: var(--nx-shadow-4);
+  overflow: hidden;
+  animation: nx-rise var(--nx-motion-normal) var(--nx-ease-out);
+}
+
+.nx-palette__search {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-3);
+  padding: var(--nx-space-3) var(--nx-space-4);
+  border-bottom: var(--nx-hairline);
+}
+
+.nx-palette__input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: var(--nx-text-md);
+  color: var(--nx-text-primary);
+}
+
+.nx-palette__input::placeholder {
+  color: var(--nx-text-muted);
+}
+
+.nx-palette__results {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--nx-space-2);
+}
+
+.nx-palette__group-label {
+  padding: var(--nx-space-2) var(--nx-space-3) var(--nx-space-1);
+  font-size: var(--nx-text-xs);
+  font-weight: 680;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--nx-text-muted);
+}
+
+.nx-palette__item {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-3);
+  width: 100%;
+  padding: var(--nx-space-2) var(--nx-space-3);
+  border-radius: var(--nx-radius-small);
+  text-align: left;
+  color: var(--nx-text-primary);
+  scroll-margin: var(--nx-space-4);
+  border: 1px solid transparent;
+  transition: background-color var(--nx-motion-instant) var(--nx-ease);
+}
+
+/* Selection is driven by aria-selected, so the visual state and the state read
+   out by a screen reader can never disagree. */
+.nx-palette__item[aria-selected="true"] {
+  background: var(--nx-accent-soft);
+  border-color: color-mix(in srgb, var(--nx-accent) 45%, transparent);
+}
+
+.nx-palette__icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--nx-radius-small);
+  background: color-mix(in srgb, var(--nx-text-primary) 8%, transparent);
+  color: var(--nx-text-secondary);
+}
+
+.nx-palette__text {
+  min-width: 0;
+  flex: 1;
+}
+
+.nx-palette__title {
+  font-size: var(--nx-text-base);
+  font-weight: 580;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-palette__subtitle {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-palette__hint {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: none;
+}
+
+.nx-palette__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-4);
+  padding: var(--nx-space-2) var(--nx-space-4);
+  border-top: var(--nx-hairline);
+  font-size: var(--nx-text-xs);
+  color: var(--nx-text-muted);
+  flex-wrap: wrap;
+}
+
+.nx-palette__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-1);
+}
+
+/* The interpretation banner for a natural-language phrase. It always states the
+   structured action that will run, and asks first when that action is
+   consequential. */
+.nx-interpretation {
+  margin: var(--nx-space-2);
+  padding: var(--nx-space-3);
+  border-radius: var(--nx-radius-small);
+  border: 1px solid color-mix(in srgb, var(--nx-info) 45%, transparent);
+  background: color-mix(in srgb, var(--nx-info) 10%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-2);
+}
+
+.nx-interpretation__label {
+  font-size: var(--nx-text-xs);
+  font-weight: 680;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nx-info);
+}
+
+.nx-interpretation__action {
+  font-size: var(--nx-text-base);
+  font-weight: 620;
+}
+
+.nx-interpretation__detail {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-text-secondary);
+  line-height: 1.5;
+}
+
+.nx-interpretation__row {
+  display: flex;
+  gap: var(--nx-space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nx-highlight {
+  color: var(--nx-accent);
+  font-weight: 700;
+}

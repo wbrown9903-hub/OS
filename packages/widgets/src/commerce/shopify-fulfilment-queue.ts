@@ -1,0 +1,71 @@
+import type { WidgetDefinition } from "@nexus/schemas";
+import { actionValue, countProperty, emptyMessageProperty, refreshProperty, titleProperty } from "../helpers.js";
+
+/** What still needs packing, with the oldest work called out. */
+export const shopifyFulfilmentQueueWidget: WidgetDefinition = {
+  type: "commerce.shopifyFulfilmentQueue",
+  name: "Shopify — fulfilment queue",
+  summary: "Orders still waiting to be packed and sent.",
+  category: "Commerce",
+  icon: "shippingbox",
+  defaultSpan: { columns: 6, rows: 3 },
+  minimumSpan: { columns: 3, rows: 2 },
+  requiresConnection: "shopify",
+  dataEndpoint: "/api/widgets/shopify/fulfilment-queue",
+  defaultRefreshSeconds: 300,
+  helpTopicId: "widget-shopify-fulfilment",
+  previewHint: "Shows the real queue once your shop is connected.",
+  schema: {
+    title: titleProperty("To pack"),
+    shop: {
+      kind: "connection",
+      label: "Shop",
+      help: "Which connected Shopify shop this reads.",
+      defaultValue: null,
+      service: "shopify",
+      group: "Data",
+    },
+    count: countProperty("Orders shown", 8, 30),
+    statuses: {
+      kind: "multiSelect",
+      label: "Include",
+      help: "Which waiting states count as work to do.",
+      defaultValue: ["unfulfilled", "partiallyFulfilled"],
+      options: [
+        { value: "unfulfilled", label: "Not started" },
+        { value: "partiallyFulfilled", label: "Partly packed" },
+        { value: "onHold", label: "On hold" },
+        { value: "scheduled", label: "Scheduled" },
+      ],
+      group: "Data",
+    },
+    urgentAfterHours: {
+      kind: "number",
+      label: "Mark as late after",
+      help: "An order older than this is flagged as late, in words as well as colour.",
+      defaultValue: 24,
+      min: 1,
+      max: 336,
+      step: 1,
+      unit: "hours",
+      group: "Behaviour",
+    },
+    showShippingMethod: {
+      kind: "toggle",
+      label: "Show the shipping method",
+      help: "Helps you pack express orders first.",
+      defaultValue: true,
+      group: "Appearance",
+    },
+    openOrder: {
+      kind: "action",
+      label: "When an order is chosen",
+      help: "Where an order opens. Nexus OS never changes an order by itself.",
+      defaultValue: actionValue({ type: "openURL", target: "" }),
+      group: "Behaviour",
+      advanced: true,
+    },
+    emptyMessage: emptyMessageProperty("Nothing waiting to be packed."),
+    refreshSeconds: refreshProperty(300),
+  },
+};

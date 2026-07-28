@@ -1,0 +1,411 @@
+/* Buttons, inputs and the small status vocabulary shared by every screen. */
+
+/* -------------------------------------------------------------------------- */
+/* Buttons                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.nx-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nx-space-2);
+  padding: 0 var(--nx-space-4);
+  height: calc(34px * var(--nx-density));
+  border-radius: var(--nx-radius-small);
+  border: 1px solid transparent;
+  font-size: var(--nx-text-base);
+  font-weight: 560;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  position: relative;
+  transition:
+    background-color var(--nx-motion-fast) var(--nx-ease),
+    border-color var(--nx-motion-fast) var(--nx-ease),
+    transform var(--nx-motion-instant) var(--nx-ease),
+    box-shadow var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-button:disabled,
+.nx-button[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.nx-button:not(:disabled):active {
+  transform: scale(calc(1 - 0.015 * var(--nx-animation-scale)));
+}
+
+.nx-button--primary {
+  background: var(--nx-accent);
+  color: var(--nx-accent-contrast);
+  box-shadow: var(--nx-shadow-1);
+}
+
+.nx-button--primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--nx-accent) 86%, white);
+}
+
+.nx-button--secondary {
+  background: color-mix(in srgb, var(--nx-surface-raised) 82%, transparent);
+  border-color: var(--nx-border);
+  color: var(--nx-text-primary);
+}
+
+.nx-button--secondary:not(:disabled):hover {
+  border-color: var(--nx-border-strong);
+  background: var(--nx-surface-raised);
+}
+
+.nx-button--ghost {
+  background: transparent;
+  color: var(--nx-text-secondary);
+}
+
+.nx-button--ghost:not(:disabled):hover {
+  background: color-mix(in srgb, var(--nx-text-primary) 8%, transparent);
+  color: var(--nx-text-primary);
+}
+
+.nx-button--danger {
+  background: color-mix(in srgb, var(--nx-danger) 16%, transparent);
+  border-color: color-mix(in srgb, var(--nx-danger) 52%, transparent);
+  color: var(--nx-danger);
+}
+
+.nx-button--danger:not(:disabled):hover {
+  background: color-mix(in srgb, var(--nx-danger) 26%, transparent);
+}
+
+.nx-button--small {
+  height: calc(27px * var(--nx-density));
+  padding: 0 var(--nx-space-3);
+  font-size: var(--nx-text-sm);
+}
+
+.nx-button--large {
+  height: calc(42px * var(--nx-density));
+  padding: 0 var(--nx-space-5);
+  font-size: var(--nx-text-md);
+}
+
+.nx-button--block {
+  width: 100%;
+}
+
+.nx-button--icon {
+  width: calc(32px * var(--nx-density));
+  height: calc(32px * var(--nx-density));
+  padding: 0;
+  border-radius: var(--nx-radius-small);
+  color: var(--nx-text-secondary);
+}
+
+.nx-button--icon:not(:disabled):hover {
+  background: color-mix(in srgb, var(--nx-text-primary) 10%, transparent);
+  color: var(--nx-text-primary);
+}
+
+.nx-button--icon[aria-expanded="true"],
+.nx-button--icon[aria-pressed="true"] {
+  background: var(--nx-accent-soft);
+  color: var(--nx-accent);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Fields                                                                      */
+/* -------------------------------------------------------------------------- */
+
+.nx-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-1);
+}
+
+.nx-field__label {
+  font-size: var(--nx-text-sm);
+  font-weight: 600;
+  color: var(--nx-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+}
+
+.nx-field__help {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-text-muted);
+  line-height: 1.45;
+}
+
+.nx-field__error {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-danger);
+  display: flex;
+  gap: var(--nx-space-1);
+  align-items: flex-start;
+}
+
+.nx-input,
+.nx-textarea,
+.nx-select {
+  width: 100%;
+  background: var(--nx-surface-sunken);
+  border: 1px solid var(--nx-border);
+  border-radius: var(--nx-radius-small);
+  padding: var(--nx-space-2) var(--nx-space-3);
+  color: var(--nx-text-primary);
+  font-size: var(--nx-text-base);
+  transition:
+    border-color var(--nx-motion-fast) var(--nx-ease),
+    background-color var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-input::placeholder,
+.nx-textarea::placeholder {
+  color: var(--nx-text-muted);
+}
+
+.nx-input:hover,
+.nx-textarea:hover,
+.nx-select:hover {
+  border-color: var(--nx-border-strong);
+}
+
+.nx-input:focus-visible,
+.nx-textarea:focus-visible,
+.nx-select:focus-visible {
+  border-color: var(--nx-accent);
+}
+
+.nx-textarea {
+  min-height: calc(96px * var(--nx-density));
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.nx-select {
+  appearance: none;
+  padding-right: var(--nx-space-6);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    right 18px top 55%,
+    right 13px top 55%;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* Switch --------------------------------------------------------------------*/
+
+.nx-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-3);
+  cursor: pointer;
+}
+
+.nx-switch__track {
+  flex: none;
+  width: calc(40px * var(--nx-density));
+  height: calc(23px * var(--nx-density));
+  border-radius: 999px;
+  background: var(--nx-surface-sunken);
+  border: 1px solid var(--nx-border-strong);
+  position: relative;
+  transition:
+    background-color var(--nx-motion-fast) var(--nx-ease),
+    border-color var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-switch__thumb {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: calc(17px * var(--nx-density));
+  height: calc(17px * var(--nx-density));
+  border-radius: 999px;
+  background: var(--nx-text-secondary);
+  transform: translateY(-50%);
+  transition:
+    transform var(--nx-motion-fast) var(--nx-ease-out),
+    background-color var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-switch[aria-checked="true"] .nx-switch__track {
+  background: var(--nx-accent);
+  border-color: var(--nx-accent);
+}
+
+.nx-switch[aria-checked="true"] .nx-switch__thumb {
+  transform: translate(calc(17px * var(--nx-density)), -50%);
+  background: var(--nx-accent-contrast);
+}
+
+/* The state is also spelled out in text, never colour alone. */
+.nx-switch__state {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-text-muted);
+  min-width: 3.5ch;
+}
+
+/* Slider --------------------------------------------------------------------*/
+
+.nx-slider {
+  width: 100%;
+  appearance: none;
+  height: 22px;
+  background: transparent;
+}
+
+.nx-slider::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--nx-surface-sunken);
+  border: 1px solid var(--nx-border);
+}
+
+.nx-slider::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: var(--nx-surface-sunken);
+  border: 1px solid var(--nx-border);
+}
+
+.nx-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  margin-top: -7px;
+  border-radius: 999px;
+  background: var(--nx-accent);
+  border: 2px solid var(--nx-canvas);
+  transition: transform var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: var(--nx-accent);
+  border: 2px solid var(--nx-canvas);
+}
+
+.nx-slider:hover::-webkit-slider-thumb {
+  transform: scale(calc(1 + 0.12 * var(--nx-animation-scale)));
+}
+
+/* Segmented control ---------------------------------------------------------*/
+
+.nx-segmented {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: var(--nx-radius-small);
+  background: var(--nx-surface-sunken);
+  border: 1px solid var(--nx-border);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.nx-segmented__option {
+  padding: var(--nx-space-1) var(--nx-space-3);
+  border-radius: calc(var(--nx-radius-small) - 2px);
+  font-size: var(--nx-text-sm);
+  font-weight: 560;
+  color: var(--nx-text-secondary);
+  white-space: nowrap;
+  transition:
+    background-color var(--nx-motion-fast) var(--nx-ease),
+    color var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-segmented__option:hover {
+  color: var(--nx-text-primary);
+}
+
+.nx-segmented__option[aria-checked="true"] {
+  background: var(--nx-surface-raised);
+  color: var(--nx-text-primary);
+  box-shadow: var(--nx-shadow-1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Status vocabulary — never colour alone: always a shape and a word too.      */
+/* -------------------------------------------------------------------------- */
+
+.nx-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-1);
+  padding: 2px var(--nx-space-2);
+  border-radius: 999px;
+  font-size: var(--nx-text-xs);
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--nx-border);
+  background: color-mix(in srgb, var(--nx-text-primary) 6%, transparent);
+  color: var(--nx-text-secondary);
+  white-space: nowrap;
+}
+
+.nx-badge--positive {
+  color: var(--nx-success);
+  border-color: color-mix(in srgb, var(--nx-success) 45%, transparent);
+  background: color-mix(in srgb, var(--nx-success) 12%, transparent);
+}
+
+.nx-badge--caution {
+  color: var(--nx-warning);
+  border-color: color-mix(in srgb, var(--nx-warning) 45%, transparent);
+  background: color-mix(in srgb, var(--nx-warning) 12%, transparent);
+}
+
+.nx-badge--critical {
+  color: var(--nx-danger);
+  border-color: color-mix(in srgb, var(--nx-danger) 45%, transparent);
+  background: color-mix(in srgb, var(--nx-danger) 12%, transparent);
+}
+
+.nx-badge--info {
+  color: var(--nx-info);
+  border-color: color-mix(in srgb, var(--nx-info) 45%, transparent);
+  background: color-mix(in srgb, var(--nx-info) 12%, transparent);
+}
+
+/* The indicator glyph differs in *shape* per state so it is legible without
+   colour vision: ● running, ▲ needs setup, ■ stopped, ◇ unknown. */
+.nx-indicator {
+  font-size: 0.85em;
+  line-height: 1;
+  font-family: var(--nx-font-mono);
+}
+
+.nx-indicator--positive {
+  color: var(--nx-success);
+}
+.nx-indicator--caution {
+  color: var(--nx-warning);
+}
+.nx-indicator--critical {
+  color: var(--nx-danger);
+}
+.nx-indicator--neutral {
+  color: var(--nx-text-muted);
+}
+
+.nx-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid var(--nx-border-strong);
+  background: var(--nx-surface-sunken);
+  color: var(--nx-text-secondary);
+  font-family: var(--nx-font-ui);
+  font-size: var(--nx-text-xs);
+  font-weight: 600;
+}

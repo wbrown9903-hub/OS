@@ -1,0 +1,175 @@
+{
+  "generator": "scripts/generate-assets.mjs",
+  "generatedAt": "2026-07-28T18:05:25.819Z",
+  "licence": "Original artwork produced procedurally for Nexus OS. No third-party imagery, fonts or trademarks are used.",
+  "files": [
+    {
+      "file": "assets/backgrounds/arcane-gold-background-thumb.png",
+      "bytes": 104469
+    },
+    {
+      "file": "assets/backgrounds/arcane-gold-background.png",
+      "bytes": 2120950
+    },
+    {
+      "file": "assets/backgrounds/clean-studio-background-thumb.png",
+      "bytes": 103136
+    },
+    {
+      "file": "assets/backgrounds/clean-studio-background.png",
+      "bytes": 2115591
+    },
+    {
+      "file": "assets/backgrounds/cyber-command-background-thumb.png",
+      "bytes": 104473
+    },
+    {
+      "file": "assets/backgrounds/cyber-command-background.png",
+      "bytes": 2121043
+    },
+    {
+      "file": "assets/backgrounds/high-contrast-background-thumb.png",
+      "bytes": 39978
+    },
+    {
+      "file": "assets/backgrounds/high-contrast-background.png",
+      "bytes": 461006
+    },
+    {
+      "file": "assets/backgrounds/minimal-productivity-background-thumb.png",
+      "bytes": 96772
+    },
+    {
+      "file": "assets/backgrounds/minimal-productivity-background.png",
+      "bytes": 1966751
+    },
+    {
+      "file": "assets/backgrounds/nexus-obsidian-background-thumb.png",
+      "bytes": 106737
+    },
+    {
+      "file": "assets/backgrounds/nexus-obsidian-background.png",
+      "bytes": 2123813
+    },
+    {
+      "file": "assets/brand/nexus-mark-1024.png",
+      "bytes": 754979
+    },
+    {
+      "file": "assets/brand/nexus-mark-256.png",
+      "bytes": 74372
+    },
+    {
+      "file": "assets/brand/nexus-mark-light-1024.png",
+      "bytes": 673617
+    },
+    {
+      "file": "assets/brand/nexus-mark-light-256.png",
+      "bytes": 63916
+    },
+    {
+      "file": "assets/brand/nexus-mark-mono-1024.png",
+      "bytes": 98791
+    },
+    {
+      "file": "assets/brand/nexus-mark-mono-256.png",
+      "bytes": 13993
+    },
+    {
+      "file": "assets/fallback/news-banner-ember-1200x630.png",
+      "bytes": 713651
+    },
+    {
+      "file": "assets/fallback/news-banner-ember-600x315.png",
+      "bytes": 164859
+    },
+    {
+      "file": "assets/fallback/news-banner-signal-1200x630.png",
+      "bytes": 717530
+    },
+    {
+      "file": "assets/fallback/news-banner-signal-600x315.png",
+      "bytes": 167367
+    },
+    {
+      "file": "assets/fallback/news-banner-tide-1200x630.png",
+      "bytes": 718932
+    },
+    {
+      "file": "assets/fallback/news-banner-tide-600x315.png",
+      "bytes": 166669
+    },
+    {
+      "file": "assets/icons/make-icns.sh",
+      "bytes": 369
+    },
+    {
+      "file": "assets/icons/nexus-icon-1024.png",
+      "bytes": 600893
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_128x128.png",
+      "bytes": 14888
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_128x128@2x.png",
+      "bytes": 46089
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_16x16.png",
+      "bytes": 696
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_16x16@2x.png",
+      "bytes": 1748
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_256x256.png",
+      "bytes": 46089
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_256x256@2x.png",
+      "bytes": 157976
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_32x32.png",
+      "bytes": 1748
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_32x32@2x.png",
+      "bytes": 4903
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_512x512.png",
+      "bytes": 157976
+    },
+    {
+      "file": "assets/icons/NexusOS.iconset/icon_512x512@2x.png",
+      "bytes": 600893
+    },
+    {
+      "file": "assets/tutorials/01-welcome.png",
+      "bytes": 698300
+    },
+    {
+      "file": "assets/tutorials/02-arranging-your-space.png",
+      "bytes": 659197
+    },
+    {
+      "file": "assets/tutorials/03-nexus-studio.png",
+      "bytes": 647915
+    },
+    {
+      "file": "assets/tutorials/04-your-brain.png",
+      "bytes": 729772
+    },
+    {
+      "file": "assets/tutorials/05-workflows.png",
+      "bytes": 725140
+    },
+    {
+      "file": "assets/tutorials/06-mac-bridge.png",
+      "bytes": 698428
+    }
+  ]
+}

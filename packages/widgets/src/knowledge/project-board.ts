@@ -1,0 +1,76 @@
+import type { WidgetDefinition } from "@nexus/schemas";
+import { actionValue, emptyMessageProperty, refreshProperty, titleProperty } from "../helpers.js";
+
+/** A compact board view of one project's columns. */
+export const projectBoardWidget: WidgetDefinition = {
+  type: "knowledge.projectBoard",
+  name: "Project board",
+  summary: "Your project's columns and what is in each of them.",
+  category: "Knowledge",
+  icon: "square.grid.3x3",
+  defaultSpan: { columns: 8, rows: 4 },
+  minimumSpan: { columns: 4, rows: 2 },
+  dataEndpoint: "/api/widgets/knowledge/board",
+  defaultRefreshSeconds: 300,
+  helpTopicId: "widget-project-board",
+  previewHint: "Reads a board you have created in your Brain.",
+  schema: {
+    title: titleProperty("Project"),
+    boardId: {
+      kind: "text",
+      label: "Board",
+      help: "The identifier of the board to show. Copy it from the board's own page.",
+      defaultValue: "",
+      maxLength: 80,
+      group: "Data",
+    },
+    columns: {
+      kind: "multiSelect",
+      label: "Columns shown",
+      help: "Hide columns you do not need on the dashboard — nothing is deleted from the board itself.",
+      defaultValue: ["todo", "doing", "blocked"],
+      options: [
+        { value: "todo", label: "To do" },
+        { value: "doing", label: "In progress" },
+        { value: "blocked", label: "Blocked" },
+        { value: "review", label: "In review" },
+        { value: "done", label: "Done" },
+      ],
+      group: "Data",
+    },
+    cardsPerColumn: {
+      kind: "slider",
+      label: "Cards per column",
+      help: "How many cards each column shows before “and 6 more”.",
+      defaultValue: 4,
+      min: 1,
+      max: 15,
+      step: 1,
+      group: "Appearance",
+    },
+    showAssignee: {
+      kind: "toggle",
+      label: "Show who has it",
+      help: "Adds the assignee to each card.",
+      defaultValue: true,
+      group: "Appearance",
+    },
+    showDueDates: {
+      kind: "toggle",
+      label: "Show due dates",
+      help: "Overdue cards are marked with words as well as colour.",
+      defaultValue: true,
+      group: "Appearance",
+    },
+    openCard: {
+      kind: "action",
+      label: "When a card is chosen",
+      help: "Where a card opens.",
+      defaultValue: actionValue({ type: "openPanel", target: "brain/card" }),
+      group: "Behaviour",
+      advanced: true,
+    },
+    emptyMessage: emptyMessageProperty("This board has no cards yet."),
+    refreshSeconds: refreshProperty(300),
+  },
+};

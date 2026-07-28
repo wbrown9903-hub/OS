@@ -1,0 +1,127 @@
+/*
+ * Design tokens.
+ *
+ * Every value the interface draws with is a `--nx-*` custom property. Colour
+ * tokens are written here as the built-in default theme so the very first paint
+ * is correct; `ShellProvider` then replaces them at runtime with the tokens of
+ * whichever theme the configuration document names, plus the resolver's
+ * `styleVariables()` output. Nothing in this repository may hard-code a colour,
+ * a radius or an animation duration.
+ */
+
+:root {
+  /* --- Theme colours (default: Nexus Obsidian, replaced at runtime) -------- */
+  --nx-canvas: #07090f;
+  --nx-canvas-inset: #0b0e17;
+  --nx-surface: #12172292;
+  --nx-surface-raised: #181f2e;
+  --nx-surface-sunken: #0a0d14;
+  --nx-border: #232c3e;
+  --nx-border-strong: #35415a;
+  --nx-text-primary: #eef2fa;
+  --nx-text-secondary: #a8b4cc;
+  --nx-text-muted: #6c7a94;
+  --nx-accent: #4cc9f0;
+  --nx-accent-soft: #4cc9f033;
+  --nx-accent-contrast: #04121a;
+  --nx-success: #3ddc97;
+  --nx-warning: #f5b14c;
+  --nx-danger: #ff6b6b;
+  --nx-info: #7aa2f7;
+  --nx-aurora-a: #1b3a6b;
+  --nx-aurora-b: #0e7490;
+  --nx-aurora-c: #3b1e6e;
+  --nx-shadow: #000000;
+  --nx-appearance: dark;
+
+  /* --- Resolver-owned values (overwritten by styleVariablesFor) ------------ */
+  --nx-radius: 14px;
+  --nx-radius-small: 8px;
+  --nx-panel-opacity: 0.72;
+  --nx-font-scale: 1;
+  --nx-density: 1;
+  --nx-space-unit: 8px;
+  --nx-animation-scale: 1;
+  --nx-contrast-boost: 0;
+
+  /* --- Spacing scale ------------------------------------------------------ */
+  --nx-space-1: calc(var(--nx-space-unit) * 0.5);
+  --nx-space-2: var(--nx-space-unit);
+  --nx-space-3: calc(var(--nx-space-unit) * 1.5);
+  --nx-space-4: calc(var(--nx-space-unit) * 2);
+  --nx-space-5: calc(var(--nx-space-unit) * 3);
+  --nx-space-6: calc(var(--nx-space-unit) * 4);
+  --nx-space-7: calc(var(--nx-space-unit) * 6);
+
+  /* --- Type scale. Multiplied by the accessibility font scale. ------------- */
+  --nx-font-ui: var(--nx-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter",
+      system-ui, sans-serif);
+  --nx-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --nx-text-xs: calc(11px * var(--nx-font-scale));
+  --nx-text-sm: calc(12.5px * var(--nx-font-scale));
+  --nx-text-base: calc(14px * var(--nx-font-scale));
+  --nx-text-md: calc(16px * var(--nx-font-scale));
+  --nx-text-lg: calc(20px * var(--nx-font-scale));
+  --nx-text-xl: calc(26px * var(--nx-font-scale));
+  --nx-text-2xl: calc(34px * var(--nx-font-scale));
+  --nx-text-3xl: calc(44px * var(--nx-font-scale));
+
+  /* --- Motion. Every duration in the product is one of these, multiplied by
+         --nx-animation-scale, which the resolver pins to 0 under reduced motion. */
+  --nx-motion-instant: calc(90ms * var(--nx-animation-scale));
+  --nx-motion-fast: calc(150ms * var(--nx-animation-scale));
+  --nx-motion-normal: calc(240ms * var(--nx-animation-scale));
+  --nx-motion-slow: calc(420ms * var(--nx-animation-scale));
+  --nx-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --nx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Elevation ---------------------------------------------------------- */
+  --nx-shadow-1: 0 1px 2px color-mix(in srgb, var(--nx-shadow) 32%, transparent);
+  --nx-shadow-2: 0 8px 24px -8px color-mix(in srgb, var(--nx-shadow) 48%, transparent);
+  --nx-shadow-3: 0 24px 60px -18px color-mix(in srgb, var(--nx-shadow) 62%, transparent);
+  --nx-shadow-4: 0 40px 90px -24px color-mix(in srgb, var(--nx-shadow) 72%, transparent);
+
+  /* --- Composite surfaces. Panel fills respect the transparency preference. */
+  --nx-panel-fill: color-mix(
+    in srgb,
+    var(--nx-surface-raised) calc(var(--nx-panel-opacity) * 100%),
+    transparent
+  );
+  --nx-panel-blur: saturate(1.4) blur(calc(22px * var(--nx-panel-opacity)));
+  --nx-hairline: 1px solid var(--nx-border);
+  --nx-focus-ring: 0 0 0 2px var(--nx-canvas), 0 0 0 4px var(--nx-accent);
+
+  /* --- Layout ------------------------------------------------------------- */
+  --nx-topbar-height: calc(46px * var(--nx-density));
+  --nx-dock-height: calc(70px * var(--nx-density));
+  --nx-content-max: 1440px;
+
+  /* --- Stacking ----------------------------------------------------------- */
+  --nx-z-canvas: 1;
+  --nx-z-dock: 60;
+  --nx-z-topbar: 70;
+  --nx-z-panel: 200;
+  --nx-z-popover: 400;
+  --nx-z-modal: 600;
+  --nx-z-palette: 700;
+  --nx-z-toast: 800;
+}
+
+/* The High Contrast theme sets this; it thickens borders and rings everywhere
+   rather than requiring each component to remember. */
+:root[data-contrast="high"] {
+  --nx-hairline: 2px solid var(--nx-border-strong);
+  --nx-focus-ring: 0 0 0 2px var(--nx-canvas), 0 0 0 5px var(--nx-accent);
+  --nx-panel-blur: none;
+  --nx-shadow-1: none;
+  --nx-shadow-2: none;
+  --nx-shadow-3: 0 0 0 2px var(--nx-border-strong);
+  --nx-shadow-4: 0 0 0 2px var(--nx-border-strong);
+}
+
+/* A safety net: even if a component forgets, the OS-level preference wins. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --nx-animation-scale: 0;
+  }
+}

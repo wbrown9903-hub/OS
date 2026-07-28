@@ -1,0 +1,65 @@
+import type { WidgetDefinition } from "@nexus/schemas";
+
+/** One search field over the places the user actually keeps things. */
+export const searchBoxWidget: WidgetDefinition = {
+  type: "essentials.searchBox",
+  name: "Search box",
+  summary: "Search your apps, files, notes and settings from one field.",
+  category: "Essentials",
+  icon: "magnifyingglass",
+  defaultSpan: { columns: 6, rows: 1 },
+  minimumSpan: { columns: 3, rows: 1 },
+  defaultRefreshSeconds: 0,
+  helpTopicId: "widget-search",
+  previewHint: "Searches only the places you tick below.",
+  schema: {
+    placeholder: {
+      kind: "text",
+      label: "Placeholder text",
+      help: "The greyed-out prompt shown before anything is typed.",
+      defaultValue: "Search Nexus OS…",
+      maxLength: 60,
+      group: "Content",
+    },
+    scopes: {
+      kind: "multiSelect",
+      label: "Search in",
+      help: "Only the places you tick are searched. Files and apps need Nexus Desktop.",
+      defaultValue: ["apps", "knowledge", "settings"],
+      options: [
+        { value: "apps", label: "Applications" },
+        { value: "files", label: "Files" },
+        { value: "knowledge", label: "Notes and knowledge" },
+        { value: "conversations", label: "AI conversations" },
+        { value: "settings", label: "Settings and widgets" },
+        { value: "web", label: "The web" },
+      ],
+      group: "Data",
+    },
+    shortcut: {
+      kind: "shortcut",
+      label: "Keyboard shortcut",
+      help: "Press this anywhere in Nexus OS to jump straight into the field.",
+      defaultValue: "cmd+k",
+      group: "Behaviour",
+    },
+    showRecentSearches: {
+      kind: "toggle",
+      label: "Remember recent searches",
+      help: "Recent searches are kept on this device only and can be cleared at any time.",
+      defaultValue: true,
+      group: "Behaviour",
+    },
+    resultLimit: {
+      kind: "slider",
+      label: "Results shown",
+      help: "How many results appear before “show everything”.",
+      defaultValue: 8,
+      min: 3,
+      max: 25,
+      step: 1,
+      group: "Appearance",
+      advanced: true,
+    },
+  },
+};

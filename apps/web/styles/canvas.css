@@ -1,0 +1,344 @@
+/* The dashboard canvas: zones, the intent grid, widget frames and window panels. */
+
+.nx-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--nx-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--nx-space-5);
+}
+
+.nx-page-header__eyebrow {
+  font-size: var(--nx-text-xs);
+  font-weight: 680;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nx-text-muted);
+  margin-bottom: var(--nx-space-1);
+}
+
+.nx-page-header__title {
+  font-size: var(--nx-text-2xl);
+  font-weight: 680;
+  letter-spacing: -0.02em;
+}
+
+.nx-page-header__lede {
+  margin-top: var(--nx-space-2);
+  font-size: var(--nx-text-md);
+  color: var(--nx-text-secondary);
+  max-width: 72ch;
+  line-height: 1.55;
+}
+
+.nx-page-header__actions {
+  display: flex;
+  gap: var(--nx-space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nx-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-5);
+}
+
+.nx-zone__header {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+  margin-bottom: var(--nx-space-3);
+}
+
+.nx-zone__title {
+  font-size: var(--nx-text-sm);
+  font-weight: 680;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nx-text-muted);
+}
+
+.nx-zone__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--nx-border);
+}
+
+/* The resolver returns a column count for the current breakpoint; the grid is
+   simply told how many columns to draw. No component computes pixels. */
+.nx-zone__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--nx-zone-columns, 12), minmax(0, 1fr));
+  gap: var(--nx-space-3);
+  align-items: stretch;
+}
+
+.nx-zone__grid--row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nx-space-3);
+}
+
+.nx-zone__grid--column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-3);
+}
+
+.nx-zone__grid--rail {
+  display: flex;
+  gap: var(--nx-space-3);
+  overflow-x: auto;
+  padding-bottom: var(--nx-space-2);
+}
+
+.nx-zone__grid--rail > * {
+  flex: 0 0 clamp(220px, 28vw, 320px);
+}
+
+.nx-widget {
+  grid-column: span var(--nx-widget-columns, 4);
+  min-height: calc(var(--nx-widget-rows, 2) * 78px * var(--nx-density));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--nx-panel-fill);
+  border: var(--nx-hairline);
+  border-radius: var(--nx-radius);
+  backdrop-filter: var(--nx-panel-blur);
+  -webkit-backdrop-filter: var(--nx-panel-blur);
+  transition:
+    border-color var(--nx-motion-fast) var(--nx-ease),
+    box-shadow var(--nx-motion-normal) var(--nx-ease);
+}
+
+.nx-widget:hover {
+  border-color: var(--nx-border-strong);
+  box-shadow: var(--nx-shadow-2);
+}
+
+.nx-widget:focus-within {
+  border-color: var(--nx-accent);
+}
+
+.nx-widget__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-2) var(--nx-space-2) var(--nx-space-2) var(--nx-space-3);
+  border-bottom: var(--nx-hairline);
+  min-height: calc(36px * var(--nx-density));
+}
+
+.nx-widget__title {
+  font-size: var(--nx-text-sm);
+  font-weight: 640;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-widget__tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--nx-motion-fast) var(--nx-ease);
+}
+
+.nx-widget:hover .nx-widget__tools,
+.nx-widget:focus-within .nx-widget__tools {
+  opacity: 1;
+}
+
+/* Keyboard users must not depend on hover to reach the tools. */
+@media (hover: none) {
+  .nx-widget__tools {
+    opacity: 1;
+  }
+}
+
+.nx-widget__body {
+  flex: 1;
+  padding: var(--nx-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-2);
+  min-height: 0;
+  overflow: auto;
+}
+
+.nx-widget__metric {
+  font-size: var(--nx-text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+}
+
+.nx-widget__caption {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-text-secondary);
+  line-height: 1.5;
+}
+
+/* The explanatory card shown wherever `unavailable` is set. Never an empty box. */
+.nx-unavailable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-3);
+  justify-content: center;
+}
+
+.nx-unavailable__kind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nx-space-1);
+  align-self: flex-start;
+}
+
+.nx-unavailable__summary {
+  font-size: var(--nx-text-base);
+  font-weight: 620;
+  color: var(--nx-text-primary);
+}
+
+.nx-unavailable__next {
+  font-size: var(--nx-text-sm);
+  color: var(--nx-text-secondary);
+  line-height: 1.5;
+}
+
+.nx-data-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nx-space-3);
+  padding: var(--nx-space-1) 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--nx-border) 60%, transparent);
+  font-size: var(--nx-text-sm);
+}
+
+.nx-data-row:last-child {
+  border-bottom: none;
+}
+
+.nx-data-row__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--nx-text-primary);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Windowed panels                                                             */
+/* -------------------------------------------------------------------------- */
+
+.nx-panel-window {
+  position: fixed;
+  z-index: var(--nx-z-panel);
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  min-height: 200px;
+  border-radius: var(--nx-radius);
+  border: var(--nx-hairline);
+  background: color-mix(
+    in srgb,
+    var(--nx-surface-raised) calc(var(--nx-panel-opacity) * 96%),
+    transparent
+  );
+  box-shadow: var(--nx-shadow-4);
+  backdrop-filter: var(--nx-panel-blur);
+  -webkit-backdrop-filter: var(--nx-panel-blur);
+  overflow: hidden;
+  animation: nx-rise var(--nx-motion-normal) var(--nx-ease-out);
+}
+
+.nx-panel-window--focused {
+  border-color: var(--nx-accent);
+}
+
+.nx-panel-window__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--nx-space-2);
+  padding: var(--nx-space-2) var(--nx-space-2) var(--nx-space-2) var(--nx-space-3);
+  border-bottom: var(--nx-hairline);
+  cursor: grab;
+  user-select: none;
+  background: color-mix(in srgb, var(--nx-surface-sunken) 45%, transparent);
+}
+
+.nx-panel-window__bar:active {
+  cursor: grabbing;
+}
+
+.nx-panel-window__title {
+  font-size: var(--nx-text-sm);
+  font-weight: 640;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-panel-window__tools {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.nx-panel-window__body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--nx-space-4);
+}
+
+.nx-panel-window__resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  color: var(--nx-text-muted);
+  display: grid;
+  place-items: end;
+  padding: 2px;
+}
+
+.nx-panel-window__resize::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  border-bottom-right-radius: 3px;
+  opacity: 0.5;
+}
+
+@media (max-width: 720px) {
+  .nx-widget {
+    grid-column: 1 / -1;
+  }
+
+  /* On a phone a floating window is a bad idea; panels become sheets. */
+  .nx-panel-window {
+    inset: auto 0 0 0 !important;
+    width: 100% !important;
+    height: 82dvh !important;
+    border-radius: var(--nx-radius) var(--nx-radius) 0 0;
+  }
+
+  .nx-panel-window__bar {
+    cursor: default;
+  }
+
+  .nx-panel-window__resize {
+    display: none;
+  }
+}

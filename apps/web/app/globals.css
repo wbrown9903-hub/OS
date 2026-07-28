@@ -1,0 +1,16 @@
+/*
+ * The single stylesheet entry point for the Nexus OS shell.
+ *
+ * There is no CSS framework here on purpose: every rule is hand-authored against
+ * the `--nx-*` design tokens, so a theme change is a change of custom properties
+ * and never a recompile.
+ */
+
+@import "../styles/tokens.css";
+@import "../styles/base.css";
+@import "../styles/controls.css";
+@import "../styles/surfaces.css";
+@import "../styles/chrome.css";
+@import "../styles/canvas.css";
+@import "../styles/palette.css";
+@import "../styles/pages.css";
