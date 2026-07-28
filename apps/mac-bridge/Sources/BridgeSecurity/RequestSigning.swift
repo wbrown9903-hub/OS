@@ -37,7 +37,7 @@ public enum BridgeSignature {
     }
 
     public static func sign(body: Data, key: Data) -> String {
-        HMAC.sha256(key: key, message: material(body)).hexString
+        HMAC.sha256(key: key, message: material(body: body)).hexString
     }
 
     /// Constant-time comparison. Returns false for a malformed hex signature
@@ -46,7 +46,7 @@ public enum BridgeSignature {
     public static func verify(body: Data, signature: String, key: Data) -> Bool {
         let trimmed = signature.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard trimmed.count == 64, let provided = Data(hexString: trimmed) else { return false }
-        let expected = HMAC.sha256(key: key, message: material(body)).data
+        let expected = HMAC.sha256(key: key, message: material(body: body)).data
         return HMAC.secureCompare(provided, expected)
     }
 }

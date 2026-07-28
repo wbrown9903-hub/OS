@@ -199,6 +199,48 @@ public struct BridgeRequestEnvelope: Codable, Sendable, Equatable {
         self.payload = payload
     }
 
+    private enum CodingKeys: String, CodingKey {
+        case version, requestID, deviceID, counter, issuedAt, origin, requestOrigin, action, payload
+    }
+
+    /// Hand-written so an unrecognised top-level `action` becomes the same
+    /// readable "the app and the Bridge are different versions" error as an
+    /// unrecognised action inside the payload, rather than a `DecodingError`.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        func read<T: Decodable>(_ type: T.Type, _ key: CodingKeys, _ field: String) throws -> T {
+            do { return try container.decode(T.self, forKey: key) }
+            catch let error as NexusError { throw error }
+            catch {
+                throw NexusError.validation(
+                    "missingField", "A request to the Mac Bridge was missing its \(field).",
+                    recovery: "Update Nexus OS so the app and the Bridge match, then try again.")
+            }
+        }
+        version = try read(String.self, .version, "version")
+        requestID = try read(String.self, .requestID, "identifier")
+        deviceID = try read(String.self, .deviceID, "device")
+        counter = try read(UInt64.self, .counter, "sequence number")
+        issuedAt = try read(Date.self, .issuedAt, "timestamp")
+        origin = try read(String.self, .origin, "origin")
+        requestOrigin = try read(ContentOrigin.self, .requestOrigin, "requester")
+        action = try BridgeAction.decode(name: try read(String.self, .action, "action"))
+        payload = try read(BridgeActionPayload.self, .payload, "details")
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(version, forKey: .version)
+        try container.encode(requestID, forKey: .requestID)
+        try container.encode(deviceID, forKey: .deviceID)
+        try container.encode(counter, forKey: .counter)
+        try container.encode(issuedAt, forKey: .issuedAt)
+        try container.encode(origin, forKey: .origin)
+        try container.encode(requestOrigin, forKey: .requestOrigin)
+        try container.encode(action.rawValue, forKey: .action)
+        try container.encode(payload, forKey: .payload)
+    }
+
     /// Rejects a document whose top-level `action` disagrees with the payload it
     /// carries. Without this a caller could get a low-impact action confirmed by
     /// the user while a high-impact payload rode along underneath.

@@ -10,6 +10,7 @@ export const goalProgressWidget: WidgetDefinition = {
   icon: "target",
   defaultSpan: { columns: 4, rows: 2 },
   minimumSpan: { columns: 2, rows: 1 },
+  dataEndpoint: "/api/widgets/goal-progress",
   defaultRefreshSeconds: 600,
   helpTopicId: "widget-goal-progress",
   previewHint: "Track it by hand, or point it at a connected figure.",

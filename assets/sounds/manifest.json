@@ -1,0 +1,96 @@
+{
+  "generator": "scripts/generate-sounds.mjs",
+  "generatedAt": "2026-07-28T18:11:15.142Z",
+  "format": "WAV, 16-bit PCM, 44100 Hz, stereo",
+  "licence": "Original synthesised audio produced for Nexus OS. No samples, recordings or third-party sounds are used, and no commercial product's audio is imitated.",
+  "sounds": [
+    {
+      "name": "navigation",
+      "file": "assets/sounds/navigation.wav",
+      "description": "Moving between panes. Almost subliminal: one soft, slightly falling blip.",
+      "seconds": 0.16,
+      "bytes": 28268,
+      "peakDbfs": -10.46
+    },
+    {
+      "name": "selection",
+      "file": "assets/sounds/selection.wav",
+      "description": "Picking an item. A single short tick a fifth above navigation, so the two read as a pair.",
+      "seconds": 0.13,
+      "bytes": 22976,
+      "peakDbfs": -10.46
+    },
+    {
+      "name": "confirmation",
+      "file": "assets/sounds/confirmation.wav",
+      "description": "Something you asked for worked. Two notes rising a fourth, warm and unhurried.",
+      "seconds": 0.45,
+      "bytes": 79424,
+      "peakDbfs": -6.94
+    },
+    {
+      "name": "warning",
+      "file": "assets/sounds/warning.wav",
+      "description": "Attention needed, nothing broken. A held pair a whole tone apart, gently pulsing — noticeable without alarm.",
+      "seconds": 0.62,
+      "bytes": 109412,
+      "peakDbfs": -4.44
+    },
+    {
+      "name": "error",
+      "file": "assets/sounds/error.wav",
+      "description": "Something did not work. A low falling minor third with a soft body — sombre, never harsh, and never a buzzer.",
+      "seconds": 0.7,
+      "bytes": 123524,
+      "peakDbfs": -2.97
+    },
+    {
+      "name": "achievement",
+      "file": "assets/sounds/achievement.wav",
+      "description": "You unlocked something. A four-note major-ninth arpeggio on struck bells with a sparkle above it.",
+      "seconds": 1.25,
+      "bytes": 220544,
+      "peakDbfs": -2.97
+    },
+    {
+      "name": "sale",
+      "file": "assets/sounds/sale.wav",
+      "description": "A sale landed. An original warm bell bloom: root, major sixth and octave struck together, with a slow swell underneath so it feels like good news arriving rather than a till ringing. Deliberately unlike any commercial notification tone.",
+      "seconds": 1.4,
+      "bytes": 247004,
+      "peakDbfs": -2.97
+    },
+    {
+      "name": "workflow-complete",
+      "file": "assets/sounds/workflow-complete.wav",
+      "description": "An automation finished. Three notes settling downward onto the tonic — the sound of a thing being put away.",
+      "seconds": 0.95,
+      "bytes": 167624,
+      "peakDbfs": -4.44
+    },
+    {
+      "name": "connection-established",
+      "file": "assets/sounds/connection-established.wav",
+      "description": "An integration or the Bridge came online. A fifth rising out of a short breath of air.",
+      "seconds": 0.7,
+      "bytes": 123524,
+      "peakDbfs": -6.94
+    },
+    {
+      "name": "launcher-ready",
+      "file": "assets/sounds/launcher-ready.wav",
+      "description": "Nexus has finished starting and the desktop is yours. A wide, slow chord that opens rather than announces.",
+      "seconds": 1.35,
+      "bytes": 238188,
+      "peakDbfs": -2.97
+    },
+    {
+      "name": "update-available",
+      "file": "assets/sounds/update-available.wav",
+      "description": "A new version is ready to install. Two identical soft bells, an unhurried double-tap that asks nothing of you.",
+      "seconds": 0.8,
+      "bytes": 141164,
+      "peakDbfs": -4.44
+    }
+  ]
+}
