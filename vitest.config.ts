@@ -17,8 +17,6 @@ export default defineConfig({
       "@nexus/security": packagePath("security"),
       "@nexus/shared": packagePath("shared"),
       "@nexus/integrations": packagePath("integrations"),
-      "@nexus/mcp": packagePath("mcp"),
-      "@nexus/workflows": packagePath("workflows"),
       "@nexus/cloud-brain": packagePath("cloud-brain"),
       "@nexus/ui": packagePath("ui"),
     },

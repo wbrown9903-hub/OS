@@ -12,8 +12,6 @@ const workspacePackages = [
   "@nexus/shared",
   "@nexus/ui",
   "@nexus/integrations",
-  "@nexus/mcp",
-  "@nexus/workflows",
   "@nexus/cloud-brain",
   "@nexus/database",
 ];

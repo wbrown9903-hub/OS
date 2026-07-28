@@ -22,8 +22,6 @@
       "@nexus/security": ["packages/security/src/index.ts"],
       "@nexus/shared": ["packages/shared/src/index.ts"],
       "@nexus/integrations": ["packages/integrations/src/index.ts"],
-      "@nexus/mcp": ["packages/mcp/src/index.ts"],
-      "@nexus/workflows": ["packages/workflows/src/index.ts"],
       "@nexus/cloud-brain": ["packages/cloud-brain/src/index.ts"],
       "@nexus/ui": ["packages/ui/src/index.ts"],
       "@nexus/database": ["packages/database/src/index.ts"]
