@@ -1,0 +1,516 @@
+// Nexus OS data model.
+//
+// Portability note: JSON-shaped values are stored as `String` columns holding
+// serialised JSON rather than a native Json column. That keeps one schema valid on
+// both SQLite (the zero-install local default) and PostgreSQL (staging and
+// production) without a second schema file that could drift. Access always goes
+// through the typed helpers in packages/database/src, never raw JSON.parse.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/* -------------------------------------------------------------------------- */
+/* Accounts and devices                                                        */
+/* -------------------------------------------------------------------------- */
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  displayName    String
+  passwordHash   String
+  // Per-user key material wrapping stored credentials. Never leaves the server.
+  encryptionSalt String
+  experience     String   @default("standard")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sessions      Session[]
+  devices       Device[]
+  configs       ConfigRecord[]
+  transactions  ConfigTransaction[]
+  connections   Connection[]
+  secrets       SecretRecord[]
+  mcpServers    McpServer[]
+  knowledge     KnowledgeItem[]
+  memories      MemoryRecord[]
+  workflows     Workflow[]
+  notifications NotificationRecord[]
+  audits        AuditEvent[]
+  media         MediaAsset[]
+  backups       BackupRecord[]
+  achievements  Achievement[]
+  plugins       PluginInstall[]
+  tutorialState TutorialProgress[]
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  userAgent  String   @default("")
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  revokedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// A paired Mac running Nexus Desktop. Each device has its own signing key, so a
+/// stolen cloud session still cannot drive someone's Mac.
+model Device {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  platform       String   @default("macOS")
+  // Public half of the device key pair; the private half stays in the Keychain.
+  publicKey      String
+  // Highest request counter seen, which is what makes replay impossible.
+  lastNonce      String   @default("0")
+  bridgeVersion  String   @default("")
+  pairedAt       DateTime @default(now())
+  lastSeenAt     DateTime?
+  revokedAt      DateTime?
+  // Emergency switch: disables every bridge action for this device at once.
+  actionsEnabled Boolean  @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/* -------------------------------------------------------------------------- */
+/* Configuration: the single editable document plus its full history           */
+/* -------------------------------------------------------------------------- */
+
+model ConfigRecord {
+  id            String   @id @default(cuid())
+  userId        String
+  /// "live" or "draft". Publishing copies draft over live in one transaction.
+  channel       String   @default("live")
+  schemaVersion Int      @default(1)
+  revision      Int      @default(0)
+  /// Serialised ConfigDocument.
+  document      String
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channel])
+}
+
+/// One committed edit. Holds both the operations and their exact inverse, so this
+/// single table powers undo, redo, version history and the editing audit trail.
+model ConfigTransaction {
+  id         String   @id
+  userId     String
+  label      String
+  author     String   @default("user")
+  revision   Int
+  operations String
+  inverse    String
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revision])
+}
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  userId       String
+  kind         String   @default("image")
+  fileName     String
+  storagePath  String
+  mimeType     String
+  byteSize     Int
+  checksum     String
+  width        Int?
+  height       Int?
+  altText      String   @default("")
+  /// Where a cached remote image came from, for attribution and re-fetching.
+  sourceURL    String?
+  attribution  String?
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, kind])
+}
+
+/* -------------------------------------------------------------------------- */
+/* Connections, secrets, MCP                                                   */
+/* -------------------------------------------------------------------------- */
+
+model Connection {
+  id           String   @id @default(cuid())
+  userId       String
+  /// "shopify" | "wordpress" | "github" | "googleDrive" | "anthropic" | ...
+  service      String
+  label        String
+  state        String   @default("notConfigured")
+  /// Non-secret settings such as a shop domain or site URL.
+  settings     String   @default("{}")
+  scopes       String   @default("[]")
+  lastCheckedAt DateTime?
+  lastError    String?
+  enabled      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secrets SecretRecord[]
+
+  @@index([userId, service])
+}
+
+/// Encrypted at rest with a per-user key. The plaintext is only ever held in
+/// memory for the duration of one outbound request, and never logged or exported.
+model SecretRecord {
+  id            String   @id @default(cuid())
+  userId        String
+  connectionId  String?
+  label         String
+  purpose       String
+  ciphertext    String
+  iv            String
+  authTag       String
+  /// Last four characters only, so the UI can help the user recognise a key.
+  hint          String   @default("")
+  createdAt     DateTime @default(now())
+  rotatedAt     DateTime?
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connection Connection? @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model McpServer {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  /// "stdio" for a local program, "http" for a remote server.
+  transport     String   @default("stdio")
+  command       String   @default("")
+  args          String   @default("[]")
+  envKeys       String   @default("[]")
+  url           String   @default("")
+  /// disabled | readOnly | askEveryTime | allowSelected | trustedWorkspace
+  permissionMode String  @default("askEveryTime")
+  allowedTools  String   @default("[]")
+  deniedTools   String   @default("[]")
+  confirmDestructive Boolean @default(true)
+  timeoutMs     Int      @default(30000)
+  maxRetries    Int      @default(2)
+  state         String   @default("notConfigured")
+  lastError     String?
+  lastConnectedAt DateTime?
+  createdAt     DateTime @default(now())
+
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tools McpTool[]
+
+  @@index([userId])
+}
+
+model McpTool {
+  id          String  @id @default(cuid())
+  serverId    String
+  name        String
+  description String  @default("")
+  /// read | write | destructive | system — drives the confirmation rules.
+  impact      String  @default("write")
+  inputSchema String  @default("{}")
+  dataAccess  String  @default("[]")
+  enabled     Boolean @default(false)
+  discoveredAt DateTime @default(now())
+
+  server McpServer @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@unique([serverId, name])
+}
+
+/* -------------------------------------------------------------------------- */
+/* Nexus Brain: knowledge and memory                                           */
+/* -------------------------------------------------------------------------- */
+
+model KnowledgeItem {
+  id          String   @id @default(cuid())
+  userId      String
+  kind        String   @default("note")
+  title       String
+  body        String   @default("")
+  /// Normalised text used by the full-text index.
+  searchText  String   @default("")
+  project     String?
+  tags        String   @default("[]")
+  sourceURL   String?
+  favourite   Boolean  @default(false)
+  archivedAt  DateTime?
+  trashedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions KnowledgeVersion[]
+  outgoing KnowledgeLink[]  @relation("linkSource")
+  incoming KnowledgeLink[]  @relation("linkTarget")
+
+  @@index([userId, project])
+  @@index([userId, updatedAt])
+}
+
+model KnowledgeVersion {
+  id        String   @id @default(cuid())
+  itemId    String
+  title     String
+  body      String
+  createdAt DateTime @default(now())
+
+  item KnowledgeItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+model KnowledgeLink {
+  id        String @id @default(cuid())
+  sourceId  String
+  targetId  String
+  relation  String @default("relatedTo")
+
+  source KnowledgeItem @relation("linkSource", fields: [sourceId], references: [id], onDelete: Cascade)
+  target KnowledgeItem @relation("linkTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, targetId, relation])
+}
+
+/// What Nexus remembers, kept separate from knowledge the user filed on purpose.
+/// Every record states its category and retention so nothing is remembered silently.
+model MemoryRecord {
+  id           String   @id @default(cuid())
+  userId       String
+  /// profile | preference | project | session | longTerm | workflowState | sensitive
+  category     String
+  content      String
+  /// Where this came from: "conversation", "workflow:<id>", "manual", ...
+  origin       String
+  project      String?
+  /// Null means keep until deleted; otherwise the record expires at this time.
+  expiresAt    DateTime?
+  /// Providers this record has actually been sent to, for the privacy dashboard.
+  sharedWith   String   @default("[]")
+  pinned       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  lastUsedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, category])
+  @@index([userId, expiresAt])
+}
+
+/* -------------------------------------------------------------------------- */
+/* Workflows                                                                   */
+/* -------------------------------------------------------------------------- */
+
+model Workflow {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String   @default("")
+  /// Serialised graph: nodes, edges and their settings.
+  graph       String
+  enabled     Boolean  @default(false)
+  version     Int      @default(1)
+  lastRunAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runs WorkflowRun[]
+
+  @@index([userId])
+}
+
+model WorkflowRun {
+  id          String   @id @default(cuid())
+  workflowId  String
+  /// pending | running | waitingForApproval | succeeded | failed | cancelled
+  status      String   @default("pending")
+  /// "manual" | "schedule" | "webhook:<id>" | "shortcut" | "event:<name>"
+  trigger     String
+  dryRun      Boolean  @default(false)
+  steps       String   @default("[]")
+  error       String?
+  startedAt   DateTime @default(now())
+  finishedAt  DateTime?
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId, startedAt])
+}
+
+/* -------------------------------------------------------------------------- */
+/* Commerce, webhooks, notifications, audit                                    */
+/* -------------------------------------------------------------------------- */
+
+/// Every inbound delivery is recorded before it is acted on. The unique index is
+/// what guarantees an order can never play the sale sound twice.
+model WebhookDelivery {
+  id           String   @id @default(cuid())
+  connectionId String
+  source       String
+  topic        String
+  externalId   String
+  signatureOK  Boolean
+  processedAt  DateTime @default(now())
+  payloadHash  String
+
+  @@unique([source, externalId])
+  @@index([connectionId, processedAt])
+}
+
+model CommerceEvent {
+  id           String   @id @default(cuid())
+  connectionId String
+  source       String   @default("shopify")
+  kind         String
+  externalId   String
+  currency     String   @default("")
+  amountMinor  Int      @default(0)
+  occurredAt   DateTime
+  summary      String   @default("")
+  raw          String   @default("{}")
+
+  @@unique([source, kind, externalId])
+  @@index([connectionId, occurredAt])
+}
+
+/// Cached metrics, always stored with the moment they were fetched so the UI can
+/// label data as live, cached or stale rather than implying it is current.
+model MetricSnapshot {
+  id           String   @id @default(cuid())
+  connectionId String
+  metric       String
+  valueMinor   Int      @default(0)
+  valueText    String   @default("")
+  currency     String   @default("")
+  windowStart  DateTime
+  windowEnd    DateTime
+  fetchedAt    DateTime @default(now())
+  stale        Boolean  @default(false)
+
+  @@unique([connectionId, metric, windowStart])
+  @@index([connectionId, fetchedAt])
+}
+
+model NotificationRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  category  String
+  priority  String   @default("normal")
+  title     String
+  body      String   @default("")
+  href      String?
+  readAt    DateTime?
+  snoozedUntil DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+/// Append-only. Written for every permission decision and every bridge action.
+model AuditEvent {
+  id           String   @id @default(cuid())
+  userId       String
+  subject      String
+  summary      String
+  impact       String   @default("read")
+  /// user | system | model | external — the provenance that decided authority.
+  requestOrigin String  @default("user")
+  outcome      String
+  detail       String   @default("")
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, subject])
+}
+
+/* -------------------------------------------------------------------------- */
+/* Platform: plugins, tutorials, backups, progression                          */
+/* -------------------------------------------------------------------------- */
+
+model PluginInstall {
+  id            String   @id @default(cuid())
+  userId        String
+  pluginId      String
+  name          String
+  version       String
+  source        String   @default("local")
+  kind          String   @default("widget")
+  /// Permissions the user approved at install time. A later update that asks for
+  /// more must be approved again — silent escalation is rejected.
+  grantedPermissions String @default("[]")
+  signatureState String  @default("unsigned")
+  enabled       Boolean  @default(false)
+  manifest      String   @default("{}")
+  installedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, pluginId])
+}
+
+model TutorialProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  tutorialId  String
+  completedSteps String @default("[]")
+  completedAt DateTime?
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tutorialId])
+}
+
+model BackupRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  kind       String   @default("manual")
+  storagePath String
+  byteSize   Int      @default(0)
+  checksum   String   @default("")
+  encrypted  Boolean  @default(false)
+  contents   String   @default("[]")
+  verifiedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  key         String
+  unlockedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}

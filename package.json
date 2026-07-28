@@ -1,0 +1,44 @@
+{
+  "name": "nexus-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nexus OS — a hosted desktop experience, AI command centre and knowledge platform, with a native macOS shell and bridge.",
+  "workspaces": [
+    "apps/web",
+    "packages/*",
+    "services/*"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @nexus/web",
+    "build": "npm run build --workspace @nexus/web",
+    "start": "npm run start --workspace @nexus/web",
+    "typecheck": "tsc --noEmit -p tsconfig.json && npm run typecheck --workspace @nexus/web",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate --schema packages/database/schema.prisma",
+    "db:migrate": "prisma migrate deploy --schema packages/database/schema.prisma",
+    "db:push": "prisma db push --schema packages/database/schema.prisma --skip-generate",
+    "db:seed": "node --experimental-strip-types packages/database/seed.ts",
+    "verify": "npm run typecheck && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "prisma": "^6.2.1",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "next": "^15.1.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.1"
+  }
+}
