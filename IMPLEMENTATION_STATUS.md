@@ -5,7 +5,8 @@ container** and the output was checked. Anything requiring macOS is marked
 *awaiting Mac* and is never described as working.
 
 Last full verification run: web build ✅ · 355 TypeScript tests ✅ · 150 Swift
-tests ✅ · typecheck (shared + web) ✅ · runtime smoke test ✅
+kernel/bridge tests ✅ · 15 desktop-core tests ✅ · typecheck (shared + web) ✅ ·
+runtime smoke test incl. bridge refusal + audit ✅
 
 ## Legend
 
@@ -58,8 +59,8 @@ tests ✅ · typecheck (shared + web) ✅ · runtime smoke test ✅
 | Config API (load, commit, optimistic concurrency) | ✅ | Verified against the live server |
 | Connections / notifications / bridge APIs | ✅ | Return real database state |
 | Help centre content | ✅ | 10 structured topics served |
-| Nexus Studio (visual editor) | ◻️ | Cut short by the spend limit — see below |
-| Auth, knowledge, memory, backup, search APIs | ◻️ | Same |
+| Nexus Studio (visual editor) | 🧪 | Canvas, inspector, controls, gallery and edit helpers written; the `/studio` route was not reached before the spend limit |
+| Auth, knowledge, memory, backup, search APIs | ◻️ | Not reached |
 
 ## Native (macOS)
 
@@ -68,7 +69,8 @@ tests ✅ · typecheck (shared + web) ✅ · runtime smoke test ✅
 | Portable kernel: security, permissions, persistence, migrations | ✅ | 150 Swift tests pass on Linux |
 | Bridge protocol: closed action set, signing, nonce, validation | ✅ | Tested (33 protocol tests among the 150) |
 | Bridge macOS service (NSWorkspace, Accessibility, Keychain) | 🍎 | Not compiled here |
-| Nexus Desktop SwiftUI shell | ◻️ | Not reached |
+| Desktop core: origin validation, navigation policy, bridge contract, uninstall plan | ✅ | 15 tests pass on Linux |
+| Nexus Desktop SwiftUI shell (WKWebView, menus, permissions onboarding) | 🍎 | Source-complete, not compiled here |
 | `.app` bundle, DMG, signing, notarisation | 🍎 | Scripted; needs a Mac and Apple credentials |
 
 ## Integrations
@@ -79,8 +81,8 @@ tests ✅ · typecheck (shared + web) ✅ · runtime smoke test ✅
 | WordPress / WooCommerce client | 🔑🧪 | Needs a site URL and application password |
 | RuneScape news + banner fallback chain | 🧪 | Feed parsing and fallbacks implemented |
 | AI providers (Anthropic, OpenAI) | 🔑 | Adapter work was cut short mid-file |
-| MCP client | ◻️ | Permission semantics exist in the kernel; client not reached |
-| Workflow engine | ◻️ | Not reached |
+| MCP client | ➖ | **Removed from scope at the user's request.** Permission semantics remain in the Swift kernel |
+| Workflow engine | ➖ | **Removed from scope at the user's request** |
 
 ## Tooling and assets
 
@@ -92,10 +94,24 @@ tests ✅ · typecheck (shared + web) ✅ · runtime smoke test ✅
 | `START_NEXUS` / `BUILD_NEXUS` / `TEST_NEXUS` / `PACKAGE_NEXUS` | 🍎 | Syntax-checked here; run on the user's Mac |
 | CI workflow | ◻️ | Not reached |
 
-## Why some rows are ◻️
+## Bridge verification (asked for explicitly)
 
-Six build agents were running in parallel when the account hit its **monthly
-spend limit**, and all six were terminated mid-write. What they had already
+Both halves that can be tested here were tested:
+
+| Check | Result |
+| --- | --- |
+| Bridge package builds, all portable targets | ✅ 150 tests |
+| A shell command (`runShellCommand`) is refused — it is not in the action list | ✅ rejected with a plain-language reason |
+| A refusal is written to the audit log | ✅ recorded as origin `external`, outcome `denied` |
+| An allowed action with no bridge running explains itself | ✅ "Nexus Desktop is not running" + next step, no crash |
+| The attempt is audited | ✅ recorded as outcome `failed` |
+| macOS side (NSWorkspace, Accessibility, Keychain) | 🍎 not verifiable in this container |
+
+## Why some rows are unfinished
+
+Build agents were repeatedly terminated mid-write when the account hit its
+**monthly spend limit**. MCP and workflows were separately **removed at the
+user's request** (recoverable from commit e642149). What they had already
 written is committed, compiles, and passes its tests — the tree is green. The
 unfinished areas are listed honestly above rather than being described as
 complete. `KNOWN_LIMITATIONS.md` covers the constraints that are structural

@@ -20,8 +20,25 @@ const bodySchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const parsed = bodySchema.safeParse(await request.json());
+    const raw = (await request.json()) as { action?: unknown };
+    const parsed = bodySchema.safeParse(raw);
     if (!parsed.success) {
+      // A refusal is a security decision, so it is recorded like any other.
+      // The requested name is stored as-is but truncated, since it is untrusted input.
+      const attempted = typeof raw?.action === "string" ? raw.action.slice(0, 64) : "(unnamed)";
+      await prisma.auditEvent
+        .create({
+          data: {
+            userId: await currentUserId(),
+            subject: "bridge.refused",
+            summary: `Refused an action that is not in the allowed list: ${attempted}`,
+            impact: "system",
+            requestOrigin: "external",
+            outcome: "denied",
+          },
+        })
+        .catch(() => undefined);
+
       return problem(
         {
           message: "That action is not one Nexus OS is allowed to perform.",

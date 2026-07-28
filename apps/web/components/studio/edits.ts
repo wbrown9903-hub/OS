@@ -105,17 +105,18 @@ export function resetPage(
       recovery: "Choose a page from the tabs above.",
     });
   }
-  const operations: Operation[] = page.widgets
-    .map((widget) => {
-      const schema = schemaFor(widget.type);
-      if (!schema) return null;
-      return {
-        op: "set" as const,
-        path: [...widgetPath(pageId, widget.id), "settings"],
-        value: defaultsForSchema(schema),
-      };
-    })
-    .filter((operation): operation is Operation => operation !== null);
+  // A widget whose definition is not currently registered is skipped rather than
+  // reset, because its defaults are unknown and guessing would discard settings.
+  const operations: Operation[] = [];
+  for (const widget of page.widgets) {
+    const schema = schemaFor(widget.type);
+    if (!schema) continue;
+    operations.push({
+      op: "set",
+      path: [...widgetPath(pageId, widget.id), "settings"],
+      value: defaultsForSchema(schema),
+    });
+  }
 
   if (operations.length === 0) {
     throw Object.assign(new Error("There is nothing on this page to reset."), {
