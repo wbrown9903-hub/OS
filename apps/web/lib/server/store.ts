@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import { builtInWidgets } from "@nexus/widgets";
 import {
+  defaultsForSchema,
+  reconcileSettings,
   type ConfigDocument,
   type Operation,
   commit,
@@ -72,7 +75,24 @@ export async function loadDocument(channel: "live" | "draft" = "live"): Promise<
     // default layout and leave the stored copy untouched for recovery.
     return defaultDocument();
   }
-  return parsed.data;
+  return repairSettings(parsed.data);
+}
+
+/**
+ * Fills in any settings a stored widget is missing and drops values that are no
+ * longer valid, so a layout saved by an older build — or hand-edited — always
+ * reaches its renderer complete. Without this, an existing installation would
+ * keep rendering empty panels even after the seed was corrected.
+ */
+function repairSettings(document: ConfigDocument): ConfigDocument {
+  for (const page of document.pages) {
+    for (const node of page.widgets) {
+      const definition = builtInWidgets.find((candidate) => candidate.type === node.type);
+      if (!definition) continue;
+      node.settings = reconcileSettings(definition.schema, node.settings).settings;
+    }
+  }
+  return document;
 }
 
 export async function commitOperations(
@@ -135,6 +155,11 @@ function widget(
   settings: Record<string, unknown> = {},
   extra: Partial<{ requiresConnection: string | null; requiresBridge: boolean }> = {},
 ) {
+  // Start from the widget's own schema defaults so a seeded panel is complete.
+  // Seeding only a title left renderers without the settings they read, which
+  // made every panel fall through to its empty state.
+  const definition = builtInWidgets.find((candidate) => candidate.type === type);
+  const complete = definition ? { ...defaultsForSchema(definition.schema), ...settings } : settings;
   return {
     id,
     type,
@@ -151,8 +176,8 @@ function widget(
       minimumWidth: null,
       hidden: false,
     },
-    settings,
-    refreshSeconds: 0,
+    settings: complete,
+    refreshSeconds: definition?.defaultRefreshSeconds ?? 0,
     shortcut: null,
   };
 }

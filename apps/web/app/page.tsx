@@ -59,8 +59,11 @@ export default function DesktopPage() {
               className="nx-zone"
               data-layout={zone.layout}
               aria-label={zone.zone.label}
-              style={{ ["--nx-zone-columns" as string]: String(zone.columns) }}
             >
+              <div
+                className="nx-zone__grid"
+                style={{ ["--nx-zone-columns" as string]: String(zone.columns) }}
+              >
               {zone.widgets.map((item) => {
                 const definition = definitionFor(item.node.type);
                 const Renderer = rendererFor(item.node.type);
@@ -97,6 +100,7 @@ export default function DesktopPage() {
                   </div>
                 );
               })}
+              </div>
 
               {zone.widgets.length === 0 ? (
                 <p className="nx-zone-empty">

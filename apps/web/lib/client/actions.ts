@@ -174,6 +174,36 @@ export function actionFromDocument(
     };
   }
 
+  if (type === "openPanel") {
+    return {
+      title: `Open ${label}`,
+      detail: "Opens this inside Nexus, without leaving the dashboard.",
+      action: {
+        kind: "openPanel",
+        panel: { id: `panel-${target}`, title: label, content: { kind: "destination", href: `/${target}` } },
+      },
+      confirmation: null,
+    };
+  }
+
+  if (type === "switchWorkspace") {
+    return {
+      title: `Switch to ${label}`,
+      detail: "Changes which workspace is active.",
+      action: { kind: "switchWorkspace", workspaceId: target },
+      confirmation: null,
+    };
+  }
+
+  if (type === "runCommand") {
+    return {
+      title: label,
+      detail: "Opens the command bar with this already typed, so you can see what it will do.",
+      action: { kind: "openPalette", seed: target },
+      confirmation: null,
+    };
+  }
+
   if (type === "runWorkflow") {
     return {
       title: `Run ${label}`,

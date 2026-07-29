@@ -268,7 +268,7 @@ nx_install_traps() {
 }
 
 nx_finished() {
-  local message="$1"
+  local message="${1:-Done.}"
   printf '\n%s  %s%s\n' "$NX_C_BOLD$NX_C_GREEN" "$message" "$NX_C_RESET"
   printf '    Full log: %s\n\n' "$NX_LOG_FILE"
   nx_log "=== finished: $message ==="
